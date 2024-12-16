@@ -7,16 +7,27 @@ import messageRoutes from "./routes/message.route.js";
 import cors from "cors";  // to handle request from frontend
 import { app,server } from "./lib/socket.js";
 
+import path from "path";
+
 // const app=express();
 // now we import app from socket.js for real time
 
 dotenv.config();
 const port=process.env.PORT;
 
+const _dirname=path.resolve();
+
 
 app.use(express.json());
 app.use(cookieParser());
 
+if(process.env.NODE_ENV==="production"){
+    app.use(express.static(path.join(__dirname,"../frontend/dist")));
+
+    app.get("*", (req,res)=>{
+        res.sendFile(path.join(__dirname,"../frontend","dist","index.html"));
+    })
+}
 
 // to handle request from frontend
 app.use(cors({
